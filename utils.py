@@ -1,8 +1,6 @@
 import re
 import string
 
-import numpy as np
-import pandas as pd
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import TweetTokenizer
@@ -43,35 +41,30 @@ def process_tweet(tweet):
     return tweets_clean
 
 
-def get_dict(file_name):
-    """
-    This function returns the english to french dictionary given a file where the each column corresponds to a word.
-    Check out the files this function takes in your workspace.
-    """
-    my_file = pd.read_csv(file_name, delimiter=' ')
-    etof = {}  # the english to french dictionary to be returned
-    for i in range(len(my_file)):
-        # indexing into the rows.
-        en = my_file.loc[i][0]
-        fr = my_file.loc[i][1]
-        etof[en] = fr
-
-    return etof
+def test_lookup(func):
+    freqs = {('sad', 0): 4,
+             ('happy', 1): 12,
+             ('oppressed', 0): 7}
+    word = 'happy'
+    label = 1
+    if func(freqs, word, label) == 12:
+        return 'SUCCESS!!'
+    return 'Failed Sanity Check!'
 
 
-def cosine_similarity(A, B):
+def lookup(freqs, word, label):
     '''
     Input:
-        A: a numpy array which corresponds to a word vector
-        B: A numpy array which corresponds to a word vector
+        freqs: a dictionary with the frequency of each pair (or tuple)
+        word: the word to look up
+        label: the label corresponding to the word
     Output:
-        cos: numerical number representing the cosine similarity between A and B.
+        n: the number of times the word with its corresponding label appears.
     '''
-    # you have to set this variable to the true label.
-    cos = -10
-    dot = np.dot(A, B)
-    norma = np.linalg.norm(A)
-    normb = np.linalg.norm(B)
-    cos = dot / (norma * normb)
+    n = 0  # freqs.get((word, label), 0)
 
-    return cos
+    pair = (word, label)
+    if (pair in freqs):
+        n = freqs[pair]
+
+    return n
